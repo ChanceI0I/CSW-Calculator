@@ -1,13 +1,13 @@
-import math
+
+import random
 import tkinter as tk
 from tkinter import *
 from tkinter import ttk
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg)
+from sympy import symbols, solve
+# from scipy.optimize import fsolve
 
-
-# from ctypes import windll                         #Apply when blur
-# windll.shcore.SetProcessDpiAwareness(1)
 
 window = tk.Tk()
 
@@ -15,8 +15,9 @@ window.resizable(False, False)
 window.attributes("-alpha", 1)     # window's transparency 
 window.attributes("-topmost", 1)   # Window stacking
 window.title("Calculator")         # Title
-# window.geometry("270x350")       # size
+
 window.configure(background="black")         # Backgroung Colors
+window.iconbitmap("calculator.ico")  # Set Icon
 
 
 style = ttk.Style()
@@ -25,7 +26,7 @@ style.theme_use("default")
 style.configure("FrameMain.TFrame", background="black")
 style.configure("FrameBtn.TFrame", background="black")
 
-style.configure("InputField.TEntry", fieldbackground="black", foreground="white")
+style.configure("InputField.TEntry", fieldbackground="black", foreground="white", insertcolor="white")
 
 style.configure("num.TButton", foreground="white", background="#0d0d0d", borderwidth=2, relief=RAISED)
 style.map("num.TButton",
@@ -40,24 +41,12 @@ style.map("Function.TButton",
     )
 
 
-print(style.theme_names())
-print(math.sin(30))
-
-# print("Txt = ", open("Calaulator-History.txt", "r").read())
-
-
 
 mainFrame = ttk.Frame(window, style="FrameMain.TFrame")
 mainFrame.grid(column=0, row=0)
 
 btnFrame = ttk.Frame(mainFrame, style="FrameBtn.TFrame")
 btnFrame.grid(column=0, row=1)
-
-
-
-window.iconbitmap("calculator.ico")  # Set Icon
-
-
 
 
 expression = StringVar()
@@ -73,17 +62,11 @@ InputField = ttk.Entry(
 InputField.grid(column=0, row=0, padx=10, pady=20)
 
 
-
-# for c in range(0, 4):
-#     for r in range(0, 4):
-#         ttk.Button(btnFrame, text=c, width=10, style="num.TButton").grid(column=c, row=r, padx=5, pady=10)
-
 def inputExpression(value):
     expression.set(expression.get()+value)
 
 def calculate(expressionIn):
-    # ans = eval(expressionIn)
-    # expression.set(ans)
+
     ans = "Unknown"
 
     try:
@@ -100,8 +83,9 @@ def calculate(expressionIn):
     expression.set(ans)
 
     history.append(str(len(history)) + " --> " + str(expressionIn) + " = " + str(ans))
-    # print(history)
 
+def calculateEnter(event):
+    calculate(expression.get())
 
 def clearAll():
     expression.set("")
@@ -114,12 +98,9 @@ def saveHistory():
         for i in history:
             f.write(i)
             f.write("\n")
-    # print("Save")
-    # print("Txt = ", open("Calaulator-History.txt", "r").read())
 
 def changeBtnRelief(styleChoose):
     style = ttk.Style()
-    # ttk.Style.configure("num.TButton", relief=style)
     style.configure("num.TButton", relief=styleChoose)
     style.configure("Function.TButton", relief=styleChoose)
 
@@ -178,12 +159,16 @@ def plot(expressionIn):
     graphWindow.title(f"Graph of {expressionIn}")
     graphWindow.attributes("-topmost", 1)
 
-    
     fig = Figure(figsize = (4, 4))
     y_res = []
     x_res = []
 
-    for j in range (-1000, 1001):
+    x_root=[]
+    y_root=[]
+
+    rootValue = ""
+
+    for j in range (-10000, 10001):
         x = j/100
         
         try:
@@ -195,35 +180,78 @@ def plot(expressionIn):
         
         x_res.append(x)
         y_res.append(y)
+    
+    x = symbols("x")
+    expre = eval(expressionIn[5:])
+    sol = solve(expre)
+    # print(sol)
+    for i in range(len(sol)):
+        # ttk.Label(graphWindow, text= f"X{i+1}:{sol[i]}").pack()
+        rootValue += (f"X{i+1} = {sol[i]}   ")
+        x_root.append(sol[i])
+        y_root.append(0)
+
+    
+
+
+    # if min(y_res) <= 0 and max(y_res) >= 0:
+    #     list = [abs(i) for i in y_res]
+    #     minY = (min(list))
+    #     for element in y_res:
+            
+    #         if abs(element) == minY:
+    #             # print(element, minY)
+    #             index = y_res.index(element)
+    #             root_x.append(x_res[index])
+    #             root_y.append(0)
+
+    # f = lambda x: eval(expressionIn[5:])
+    # # fsolve(f, [-100, 100])
+    # print(fsolve(f, [-100, 100]))
 
 
     graph = fig.add_subplot(111)
     graph.grid(True)
-    # graph.spines["left"].set_position("center")
-    # graph.spines["bottom"].set_position("center")
     graph.tick_params(axis="both", labelsize=6)
-    # graph.margins(x=0, y=0.02)
-    graph.set_xlim([-10, 10])
-    graph.set_ylim([-10, 10])
+    graph.set_title(label=f"{expressionIn}")
+    graph.set_xlim([-20, 20])
+    graph.set_ylim([-20, 20])
     graph.axhline(0, color="black", alpha=0.7, linestyle = "--")
     graph.axvline(0, color="black", alpha=0.7, linestyle = "--")
+    graph.set_xlabel(rootValue)
+    
     graph.plot(x_res,y_res)
+    graph.scatter(x_root, y_root, color="red")
+
     canvas = FigureCanvasTkAgg(fig, master = graphWindow)
     canvas.draw()
 
+    def saveImagePNG():
+        graph.figure.savefig(f"{random.randint(1,1000)}.png")
+        # print("save as png")
+    
+    def saveImagePDF():
+        graph.figure.savefig(f"{random.randint(1,1000)}.pdf")
+        # print("save as pdf")
+
+    menuBar_sub = Menu(graphWindow)
+    graphWindow.config(menu=menuBar_sub)
+    fileMenu_Sub = Menu(menuBar_sub, tearoff=False, background="white", activebackground="grey")
+    fileMenu_Sub.add_command(label="Save as PNG", command=saveImagePNG)
+    fileMenu_Sub.add_command(label="Save as PDF", command=saveImagePDF)
+    menuBar_sub.add_cascade(label="File", menu=fileMenu_Sub)
+
+    
+
     canvas.get_tk_widget().pack()
 
+window.bind("<Return>", calculateEnter)
 
 btnClearAll = ttk.Button(btnFrame, text="CA", width=10, takefocus=False, style="Function.TButton", command=clearAll).grid(column=0, row=0, padx=5, pady=10)
 btn2BackSpace = ttk.Button(btnFrame, text="B", width=10, takefocus=False, style="Function.TButton", command=backSpace).grid(column=1, row=0, padx=5, pady=10)
 btnBracketR = ttk.Button(btnFrame, text="(", width=10, takefocus=False, style="Function.TButton", command=lambda:inputExpression("(")).grid(column=2, row=0, padx=5, pady=10)
 btn4BracketL = ttk.Button(btnFrame, text=")", width=10, takefocus=False, style="Function.TButton", command=lambda:inputExpression(")")).grid(column=3, row=0, padx=5, pady=10)
 
-
-# for r in range(3,0,-1):
-#     for c in range(0,3):
-#         btn = ttk.Button(btnFrame, text=f"{}", width=10, style="num.TButton", command=lambda:inputExpression(f"{(r%3)*3 + c+1}")).grid(column=c, row=r, padx=5, pady=10)
-#         # print(r,c)
 
 btn1 = ttk.Button(btnFrame, text="1", width=10, takefocus=False, style="num.TButton", command=lambda:inputExpression("1")).grid(column=0, row=3, padx=5, pady=10)
 btn2 = ttk.Button(btnFrame, text="2", width=10, takefocus=False, style="num.TButton", command=lambda:inputExpression("2")).grid(column=1, row=3, padx=5, pady=10)
@@ -249,9 +277,5 @@ btn = ttk.Button(btnFrame, text="F(x)", width=10, takefocus=False, style="Functi
 btn = ttk.Button(btnFrame, text="X", width=10, takefocus=False, style="Function.TButton", command=lambda:inputExpression("x")).grid(column=1, row=5, padx=5, pady=10)
 btn = ttk.Button(btnFrame, text="Graph", width=10, takefocus=False, style="Function.TButton", command=lambda:plot(expression.get())).grid(column=2, row=5, padx=5, pady=10)
 btn = ttk.Button(btnFrame, text="^", width=10, takefocus=False, style="Function.TButton", command=lambda:inputExpression("**")).grid(column=3, row=5, padx=5, pady=10)
-
-# InputBtn_Frame = ttk.Frame(window).grid()
-# print(btnFrame.winfo_width(), InputField.winfo_width())
-
 
 window.mainloop()
