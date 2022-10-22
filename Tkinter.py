@@ -80,6 +80,7 @@ def inputExpression(value):    # Button Input
     expression.set(expression.get()+value)
 
 def calculate(expressionIn):   # Calculate expression
+    expressionIn = replace(expressionIn)
     ans = "Unknown"
 
     # Error Handling
@@ -157,6 +158,14 @@ def check(b:list, a:str) -> bool:
             return True
     return False
 
+# Replace ^ with **
+def replace(s:str) ->str:
+    rep = s.replace("^","**")
+    return rep
+
+# Get random number
+def randomNum():
+    return random.randint(0,9)
 
 # Create menu bar
 menuBar = Menu(window)
@@ -213,9 +222,14 @@ subMenuTheme.add_command(label="Xpnative", command=lambda:changeTheme("xpnative"
 # Element under Math 
 MathMenu.add_command(label="Log(x, Base)", command=lambda:inputExpression("log("))
 MathMenu.add_command(label="Round", command=Round)
+MathMenu.add_command(label="X^2", command=lambda:inputExpression("^2"))
+MathMenu.add_command(label="Random Number", command=lambda:inputExpression(str(randomNum())))
 
 # Plot() use to creat graph of function
 def plot(expressionIn):
+    # Store the unchanges expression, for title and lable
+    unchange = expressionIn
+    expressionIn = replace(expressionIn)
 
     # Creat new window for graph
     graphWindow = Toplevel(window)
@@ -278,7 +292,7 @@ def plot(expressionIn):
 
     # Set lable on graph
     graph.tick_params(axis="both", labelsize=6)
-    graph.set_title(label=f"{expressionIn}")
+    graph.set_title(label=f"{unchange}")
     # Set the limit of graph
     graph.set_xlim([-15, 15])
     graph.set_ylim([-15, 15])
@@ -290,7 +304,7 @@ def plot(expressionIn):
     graph.set_xlabel(rootValue)
     
     # Plot points on the graph and add legend
-    graph.plot(x_res,y_res, label=f"{expressionIn}")
+    graph.plot(x_res,y_res, label=f"{unchange}")
     graph.legend(loc="upper left")
 
     # Plot the root on the graph
@@ -322,42 +336,42 @@ window.bind("<Return>", calculateEnter)
 # Add all the buttons to the window
 
 # Function buttons
-btnClearAll = ttk.Button(btnFrame, text="CA", width=10, takefocus=False, style="Function.TButton", command=clearAll).grid(column=0, row=0, padx=5, pady=10)
-btn2BackSpace = ttk.Button(btnFrame, text="B", width=10, takefocus=False, style="Function.TButton", command=backSpace).grid(column=1, row=0, padx=5, pady=10)
-btnBracketR = ttk.Button(btnFrame, text="(", width=10, takefocus=False, style="Function.TButton", command=lambda:inputExpression("(")).grid(column=2, row=0, padx=5, pady=10)
-btn4BracketL = ttk.Button(btnFrame, text=")", width=10, takefocus=False, style="Function.TButton", command=lambda:inputExpression(")")).grid(column=3, row=0, padx=5, pady=10)
+btnClearAll = ttk.Button(btnFrame, text="CA", width=10, takefocus=False, style="Function.TButton", command=clearAll).grid(column=3, row=0, padx=5, pady=10)
+btn2BackSpace = ttk.Button(btnFrame, text="B", width=10, takefocus=False, style="Function.TButton", command=backSpace).grid(column=2, row=0, padx=5, pady=10)
+btnBracketR = ttk.Button(btnFrame, text="(", width=10, takefocus=False, style="Function.TButton", command=lambda:inputExpression("(")).grid(column=0, row=2, padx=5, pady=10)
+btn4BracketL = ttk.Button(btnFrame, text=")", width=10, takefocus=False, style="Function.TButton", command=lambda:inputExpression(")")).grid(column=1, row=2, padx=5, pady=10)
 
 # Number buttons 0-9
-btn1 = ttk.Button(btnFrame, text="1", width=10, takefocus=False, style="num.TButton", command=lambda:inputExpression("1")).grid(column=0, row=3, padx=5, pady=10)
-btn2 = ttk.Button(btnFrame, text="2", width=10, takefocus=False, style="num.TButton", command=lambda:inputExpression("2")).grid(column=1, row=3, padx=5, pady=10)
-btn3 = ttk.Button(btnFrame, text="3", width=10, takefocus=False, style="num.TButton", command=lambda:inputExpression("3")).grid(column=2, row=3, padx=5, pady=10)
+btn1 = ttk.Button(btnFrame, text="1", width=10, takefocus=False, style="num.TButton", command=lambda:inputExpression("1")).grid(column=0, row=5, padx=5, pady=10)
+btn2 = ttk.Button(btnFrame, text="2", width=10, takefocus=False, style="num.TButton", command=lambda:inputExpression("2")).grid(column=1, row=5, padx=5, pady=10)
+btn3 = ttk.Button(btnFrame, text="3", width=10, takefocus=False, style="num.TButton", command=lambda:inputExpression("3")).grid(column=2, row=5, padx=5, pady=10)
 
-btn4 = ttk.Button(btnFrame, text="4", width=10, takefocus=False, style="num.TButton", command=lambda:inputExpression("4")).grid(column=0, row=2, padx=5, pady=10)
-btn5 = ttk.Button(btnFrame, text="5", width=10, takefocus=False, style="num.TButton", command=lambda:inputExpression("5")).grid(column=1, row=2, padx=5, pady=10)
-btn6 = ttk.Button(btnFrame, text="6", width=10, takefocus=False, style="num.TButton", command=lambda:inputExpression("6")).grid(column=2, row=2, padx=5, pady=10)
+btn4 = ttk.Button(btnFrame, text="4", width=10, takefocus=False, style="num.TButton", command=lambda:inputExpression("4")).grid(column=0, row=4, padx=5, pady=10)
+btn5 = ttk.Button(btnFrame, text="5", width=10, takefocus=False, style="num.TButton", command=lambda:inputExpression("5")).grid(column=1, row=4, padx=5, pady=10)
+btn6 = ttk.Button(btnFrame, text="6", width=10, takefocus=False, style="num.TButton", command=lambda:inputExpression("6")).grid(column=2, row=4, padx=5, pady=10)
 
-btn7 = ttk.Button(btnFrame, text="7", width=10, takefocus=False, style="num.TButton", command=lambda:inputExpression("7")).grid(column=0, row=1, padx=5, pady=10)
-btn8 = ttk.Button(btnFrame, text="8", width=10, takefocus=False, style="num.TButton", command=lambda:inputExpression("8")).grid(column=1, row=1, padx=5, pady=10)
-btn9 = ttk.Button(btnFrame, text="9", width=10, takefocus=False, style="num.TButton", command=lambda:inputExpression("9")).grid(column=2, row=1, padx=5, pady=10)
-btn0 = ttk.Button(btnFrame, text="0", width=10, takefocus=False, style="num.TButton", command=lambda:inputExpression("0")).grid(column=1, row=4, padx=5, pady=10)
+btn7 = ttk.Button(btnFrame, text="7", width=10, takefocus=False, style="num.TButton", command=lambda:inputExpression("7")).grid(column=0, row=3, padx=5, pady=10)
+btn8 = ttk.Button(btnFrame, text="8", width=10, takefocus=False, style="num.TButton", command=lambda:inputExpression("8")).grid(column=1, row=3, padx=5, pady=10)
+btn9 = ttk.Button(btnFrame, text="9", width=10, takefocus=False, style="num.TButton", command=lambda:inputExpression("9")).grid(column=2, row=3, padx=5, pady=10)
+btn0 = ttk.Button(btnFrame, text="0", width=10, takefocus=False, style="num.TButton", command=lambda:inputExpression("0")).grid(column=0, row=6, padx=5, pady=10)
 
 # Other function buttons
-btnPlus = ttk.Button(btnFrame, text="+", width=10, takefocus=False, style="Function.TButton", command=lambda:inputExpression("+")).grid(column=3, row=3, padx=5, pady=10)
-btnSubtrack = ttk.Button(btnFrame, text="-", width=10, takefocus=False, style="Function.TButton", command=lambda:inputExpression("-")).grid(column=3, row=2, padx=5, pady=10)
-btnMultiply = ttk.Button(btnFrame, text="X", width=10, takefocus=False, style="Function.TButton", command=lambda:inputExpression("*")).grid(column=3, row=1, padx=5, pady=10)
-btnDevide = ttk.Button(btnFrame, text="/", width=10, takefocus=False, style="Function.TButton", command=lambda:inputExpression("/")).grid(column=3, row=4, padx=5, pady=10)
-btnEqual = ttk.Button(btnFrame, text="=", width=10, takefocus=False, style="Function.TButton", command=lambda:calculate(expression.get())).grid(column=2, row=4, padx=5, pady=10)
-btnDot = ttk.Button(btnFrame, text=".", width=10, takefocus=False, style="Function.TButton", command=lambda:inputExpression(".")).grid(column=0, row=4, padx=5, pady=10)
+btnPlus = ttk.Button(btnFrame, text="+", width=10, takefocus=False, style="Function.TButton", command=lambda:inputExpression("+")).grid(column=3, row=6, padx=5, pady=10)
+btnSubtrack = ttk.Button(btnFrame, text="-", width=10, takefocus=False, style="Function.TButton", command=lambda:inputExpression("-")).grid(column=3, row=5, padx=5, pady=10)
+btnMultiply = ttk.Button(btnFrame, text="X", width=10, takefocus=False, style="Function.TButton", command=lambda:inputExpression("*")).grid(column=3, row=4, padx=5, pady=10)
+btnDevide = ttk.Button(btnFrame, text="/", width=10, takefocus=False, style="Function.TButton", command=lambda:inputExpression("/")).grid(column=3, row=3, padx=5, pady=10)
+btnEqual = ttk.Button(btnFrame, text="=", width=10, takefocus=False, style="Function.TButton", command=lambda:calculate(expression.get())).grid(column=2, row=6, padx=5, pady=10)
+btnDot = ttk.Button(btnFrame, text=".", width=10, takefocus=False, style="Function.TButton", command=lambda:inputExpression(".")).grid(column=1, row=6, padx=5, pady=10)
 
-btn = ttk.Button(btnFrame, text="F(x)", width=10, takefocus=False, style="Function.TButton", command=lambda:inputExpression("F(x)=")).grid(column=0, row=5, padx=5, pady=10)
-btn = ttk.Button(btnFrame, text="X,T,θ,N", width=10, takefocus=False, style="Function.TButton", command=lambda:inputExpression("x")).grid(column=1, row=5, padx=5, pady=10)
-btn = ttk.Button(btnFrame, text="Graph", width=10, takefocus=False, style="Function.TButton", command=lambda:plot(expression.get())).grid(column=2, row=5, padx=5, pady=10)
-btn = ttk.Button(btnFrame, text="^", width=10, takefocus=False, style="Function.TButton", command=lambda:inputExpression("**")).grid(column=3, row=5, padx=5, pady=10)
+btn = ttk.Button(btnFrame, text="F(x)", width=10, takefocus=False, style="Function.TButton", command=lambda:inputExpression("F(x)=")).grid(column=0, row=0, padx=5, pady=10)
+btn = ttk.Button(btnFrame, text="X,T,θ,N", width=10, takefocus=False, style="Function.TButton", command=lambda:inputExpression("x")).grid(column=1, row=0, padx=5, pady=10)
+btn = ttk.Button(btnFrame, text="Graph", width=10, takefocus=False, style="Function.TButton", command=lambda:plot(expression.get())).grid(column=3, row=1, padx=5, pady=10)
+btn = ttk.Button(btnFrame, text="^", width=10, takefocus=False, style="Function.TButton", command=lambda:inputExpression("^")).grid(column=3, row=2, padx=5, pady=10)
 
-btn = ttk.Button(btnFrame, text=",", width=10, takefocus=False, style="Function.TButton", command=lambda:inputExpression(",")).grid(column=0, row=6, padx=5, pady=10)
-btn = ttk.Button(btnFrame, text="Sin", width=10, takefocus=False, style="Function.TButton", command=lambda:inputExpression("SIN(")).grid(column=1, row=6, padx=5, pady=10)
-btn = ttk.Button(btnFrame, text="Cos", width=10, takefocus=False, style="Function.TButton", command=lambda:inputExpression("COS(")).grid(column=2, row=6, padx=5, pady=10)
-btn = ttk.Button(btnFrame, text="Tan", width=10, takefocus=False, style="Function.TButton", command=lambda:inputExpression("TAN(")).grid(column=3, row=6, padx=5, pady=10)
+btn = ttk.Button(btnFrame, text=",", width=10, takefocus=False, style="Function.TButton", command=lambda:inputExpression(",")).grid(column=2, row=2, padx=5, pady=10)
+btn = ttk.Button(btnFrame, text="Sin", width=10, takefocus=False, style="Function.TButton", command=lambda:inputExpression("SIN(")).grid(column=0, row=1, padx=5, pady=10)
+btn = ttk.Button(btnFrame, text="Cos", width=10, takefocus=False, style="Function.TButton", command=lambda:inputExpression("COS(")).grid(column=1, row=1, padx=5, pady=10)
+btn = ttk.Button(btnFrame, text="Tan", width=10, takefocus=False, style="Function.TButton", command=lambda:inputExpression("TAN(")).grid(column=2, row=1, padx=5, pady=10)
 
 # Keep the window running
 window.mainloop()
