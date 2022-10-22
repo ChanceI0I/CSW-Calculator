@@ -277,6 +277,7 @@ def plot(expressionIn):
         x = symbols("x")
         expre = eval(expressionIn[5:])
         sol = solve(expre)
+        print(sol)
 
         # Store the coordinate for root
         for i in range(len(sol)):
@@ -307,9 +308,11 @@ def plot(expressionIn):
     graph.plot(x_res,y_res, label=f"{unchange}")
     graph.legend(loc="upper left")
 
-    # Plot the root on the graph
-    graph.scatter(x_root, y_root, color="red")
-
+    # Try plot the root on the graph
+    try:
+        graph.scatter(x_root, y_root, color="red")
+    except:
+        print("Complex number")
     # Draw graph on ttk canvas
     canvas = FigureCanvasTkAgg(fig, master = graphWindow)
     canvas.draw()
